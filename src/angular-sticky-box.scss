@@ -1,0 +1,26 @@
+.sticky-box {
+  position: relative;
+  overflow: hidden;
+  &.sticky-fix {
+    div.sticky-inner-small {
+      position: fixed;
+      top: 0;
+      &.bottom {
+        top: auto;
+      }
+    }
+    div.sticky-inner-big {
+      &.down {
+        position: fixed;
+      }
+      &.up {
+        position: fixed;
+      }
+    }
+  }
+  > div {
+    *:first-child {
+      margin-top: 0;
+    }
+  }
+}
