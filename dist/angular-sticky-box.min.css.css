@@ -1,6 +1,6 @@
 /*!
  * angular-sticky-box
  * https://github.com/pcassis/angular-sticky-box
- * Version: 0.0.1 - 2016-01-23T13:14:43.897Z
+ * Version: 0.0.1 - 2016-01-24T11:21:39.995Z
  * License: MIT
  */.sticky-box{position:relative;overflow:hidden}.sticky-box.sticky-fix div.sticky-inner-small{position:fixed;top:0}.sticky-box.sticky-fix div.sticky-inner-small.bottom{top:auto}.sticky-box.sticky-fix div.sticky-inner-big.down,.sticky-box.sticky-fix div.sticky-inner-big.up{position:fixed}.sticky-box>div :first-child{margin-top:0}

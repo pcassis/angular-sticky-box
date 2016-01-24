@@ -5,7 +5,10 @@
     ""
   ],
   "description": "",
-  "main": "dist/angular-sticky-box.js, dist/angular-sticky-box.js",
+  "main": [
+		"dist/angular-sticky-box.js",
+		"dist/angular-sticky-box.css"
+	],
   "license": "MIT",
   "private": false,
   "ignore": [

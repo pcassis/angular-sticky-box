@@ -1,14 +1,14 @@
 /*!
  * angular-sticky-box
  * https://github.com/pcassis/angular-sticky-box
- * Version: 0.0.1 - 2016-01-23T13:14:43.891Z
+ * Version: 0.0.1 - 2016-01-24T11:21:39.987Z
  * License: MIT
  */
 
 
 'use strict';
 
-angular.module('angular-sticky-box', []).directive('angularStickyBox', function ($timeout) {
+angular.module('angular-sticky-box', []).directive('stickyBox', function ($timeout) {
 	var viewHeight;
 
 	function setup(scope, el) {
@@ -47,7 +47,7 @@ angular.module('angular-sticky-box', []).directive('angularStickyBox', function 
 			return;
 		}
 
-		if (window.pageYOffset > scope.wrapTop) {
+		if (window.pageYOffset + scope.cfg.offset > scope.wrapTop) {
 			if (-1 == el.className.indexOf('sticky-fix')) {
 				el.className += ' sticky-fix';
 			}
@@ -62,7 +62,7 @@ angular.module('angular-sticky-box', []).directive('angularStickyBox', function 
 				scope.posClass = 'down';
 				scrollBottom = window.pageYOffset + viewHeight - scope.wrapBottom;
 				el.children[0].style.bottom = scrollBottom+'px';
-			} else if (window.pageYOffset < scope.wrapTop) {
+			} else if (window.pageYOffset + scope.cfg.offset < scope.wrapTop) {
 				el.children[0].style.bottom = 0;
 			} else if (window.pageYOffset > scope.pageY) {
 				// going down
@@ -77,22 +77,26 @@ angular.module('angular-sticky-box', []).directive('angularStickyBox', function 
 			} else {
 				// going up
 				scope.posClass = 'up';
-				if (scope.innerHeight + bottom + scope.offsetTop > viewHeight) {
-					if (bottom - scope.pageY + window.pageYOffset < viewHeight - scope.innerHeight - scope.offsetTop) {
-						el.children[0].style.bottom = (viewHeight - scope.innerHeight - scope.offsetTop)+'px';
+				if (scope.innerHeight + bottom + scope.cfg.offset > viewHeight) {
+					if (scope.innerHeight + bottom - viewHeight - scope.cfg.offset < 0) {
+						el.children[0].style.bottom = (viewHeight - scope.innerHeight - scope.cfg.offset)+'px';
 					} else {
 						el.children[0].style.bottom = (bottom - scope.pageY + window.pageYOffset)+'px';
 					}
 				}
 			}
 
-		} else if (window.pageYOffset + scope.innerHeight > scope.wrapBottom) {
-			scope.posClass = 'bottom';
-			scrollBottom = window.pageYOffset + viewHeight - scope.wrapBottom;
-			el.children[0].style.bottom = scrollBottom+'px';
-			el.children[0].scrollTop = scrollBottom;
 		} else {
-			scope.posClass = '';
+			if (window.pageYOffset + scope.innerHeight + scope.cfg.offset > scope.wrapBottom) {
+				scope.posClass = 'bottom';
+				scrollBottom = window.pageYOffset + viewHeight - scope.wrapBottom;
+				el.children[0].style.bottom = scrollBottom+'px';
+				el.children[0].scrollTop = scrollBottom;
+				el.children[0].style.top = 'auto';
+			} else {
+				el.children[0].style.top = scope.cfg.offset+'px';
+				scope.posClass = '';
+			}
 		}
 		el.children[0].className = scope.sizeClass+' '+scope.posClass;
 		scope.pageY = window.pageYOffset;
@@ -101,7 +105,9 @@ angular.module('angular-sticky-box', []).directive('angularStickyBox', function 
 
 	return {
 		restrict: 'A',
-		scope:{},
+		scope:{
+			offset:'@stickyBoxOffset'
+		},
 		link: function(scope, element) {
 			function setupScope() {
 				setup(scope, el);
@@ -109,7 +115,12 @@ angular.module('angular-sticky-box', []).directive('angularStickyBox', function 
 			var el = element[0];
 			el.className += ' sticky-box';
 
-			scope.offsetTop = 0;
+			scope.cfg = {};
+			if (!scope.offset) {
+				scope.cfg.offset = 0;
+			} else {
+				scope.cfg.offset = parseInt(scope.offset);
+			}
 
 			angular.element(window).on('resize', setupScope);
 			angular.element(window).on('scroll', function() {
