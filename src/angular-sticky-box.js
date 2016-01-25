@@ -69,8 +69,8 @@ angular.module('angular-sticky-box', []).directive('stickyBox', function ($timeo
 			} else {
 				// going up
 				scope.posClass = 'up';
-				if (scope.innerHeight + bottom + scope.cfg.offset > viewHeight) {
-					if (scope.innerHeight + bottom - viewHeight - scope.cfg.offset < 0) {
+				if (window.pageYOffset > scope.wrapTop + scope.cfg.offset) {
+					if (scope.innerHeight + bottom - viewHeight < 0) {
 						el.children[0].style.bottom = (viewHeight - scope.innerHeight - scope.cfg.offset)+'px';
 					} else {
 						el.children[0].style.bottom = (bottom - scope.pageY + window.pageYOffset)+'px';
