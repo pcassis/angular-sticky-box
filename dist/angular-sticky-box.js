@@ -1,7 +1,7 @@
 /*!
  * angular-sticky-box
  * https://github.com/pcassis/angular-sticky-box
- * Version: 0.0.1 - 2016-01-24T11:21:39.987Z
+ * Version: 0.0.1 - 2016-01-26T13:41:37.031Z
  * License: MIT
  */
 
@@ -77,8 +77,8 @@ angular.module('angular-sticky-box', []).directive('stickyBox', function ($timeo
 			} else {
 				// going up
 				scope.posClass = 'up';
-				if (scope.innerHeight + bottom + scope.cfg.offset > viewHeight) {
-					if (scope.innerHeight + bottom - viewHeight - scope.cfg.offset < 0) {
+				if (window.pageYOffset > scope.wrapTop + scope.cfg.offset) {
+					if (scope.innerHeight + bottom - viewHeight <= 0) {
 						el.children[0].style.bottom = (viewHeight - scope.innerHeight - scope.cfg.offset)+'px';
 					} else {
 						el.children[0].style.bottom = (bottom - scope.pageY + window.pageYOffset)+'px';
@@ -122,7 +122,11 @@ angular.module('angular-sticky-box', []).directive('stickyBox', function ($timeo
 				scope.cfg.offset = parseInt(scope.offset);
 			}
 
-			angular.element(window).on('resize', setupScope);
+			angular.element(window).on('resize', function() {
+				$timeout(function() {
+					setup(scope, el);
+				});
+			});
 			angular.element(window).on('scroll', function() {
 				scroll(scope, el);
 			});

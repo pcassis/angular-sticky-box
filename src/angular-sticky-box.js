@@ -70,7 +70,7 @@ angular.module('angular-sticky-box', []).directive('stickyBox', function ($timeo
 				// going up
 				scope.posClass = 'up';
 				if (window.pageYOffset > scope.wrapTop + scope.cfg.offset) {
-					if (scope.innerHeight + bottom - viewHeight < 0) {
+					if (scope.innerHeight + bottom - viewHeight <= 0) {
 						el.children[0].style.bottom = (viewHeight - scope.innerHeight - scope.cfg.offset)+'px';
 					} else {
 						el.children[0].style.bottom = (bottom - scope.pageY + window.pageYOffset)+'px';
@@ -114,7 +114,11 @@ angular.module('angular-sticky-box', []).directive('stickyBox', function ($timeo
 				scope.cfg.offset = parseInt(scope.offset);
 			}
 
-			angular.element(window).on('resize', setupScope);
+			angular.element(window).on('resize', function() {
+				$timeout(function() {
+					setup(scope, el);
+				});
+			});
 			angular.element(window).on('scroll', function() {
 				scroll(scope, el);
 			});
