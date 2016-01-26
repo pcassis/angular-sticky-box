@@ -1,5 +1,8 @@
 # Angular-sticky-box
 
+Sticky-box is designed to make sidebar visible while scrolling. Both top and bottom edge is considered to position box.
+It can also handle boxes higher than window. jQuery is NOT required.
+
 ### Installation
 
 Install via bower
@@ -13,14 +16,19 @@ bower install angular-sticky-box
 Add it as a dependency to your app and then use angular-sticky-box in your HTML files.
 
 ```html
-<div angular-sticky-box>
+<div sticky-box>
 	<div>
 	<!-- sticky box content -->
 	</div>
 </div>
 ```
 
+It's important that sticky-box element and related content element has equal height. It can be achieved with css flex-box.
 See working example in /demo.
+
+### Options
+
+* `sticky-box-offset`: top offset in pixels. Useful when you have fixed header.
 
 ### Development
 
