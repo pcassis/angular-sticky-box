@@ -1,7 +1,7 @@
 /*!
  * angular-sticky-box
  * https://github.com/pcassis/angular-sticky-box
- * Version: 0.0.1 - 2016-01-26T13:41:37.031Z
+ * Version: 0.0.1 - 2016-01-28T10:28:44.036Z
  * License: MIT
  */
 
@@ -31,9 +31,58 @@ angular.module('angular-sticky-box', []).directive('stickyBox', function ($timeo
 
 		if (scope.innerHeight > viewHeight) {
 			scope.sizeClass = 'sticky-inner-big';
+			scope.breaks = [
+				{
+					top: scope.wrapBottom - viewHeight,
+					className: 'bottom',
+					style: [['top', (el.offsetHeight - scope.innerHeight)+'px']]
+				},
+				{
+					top: scope.wrapTop - scope.cfg.offset,
+					className: 'top',
+					style: [['top', 'auto']],
+					up:function(scope, el) {
+						scope.pageYup = window.pageYOffset;
+						var bottom = parseInt(el.children[0].style.bottom);
+							if (scope.pageYdown - window.pageYOffset <= scope.innerHeight - viewHeight + scope.cfg.offset) {
+								el.children[0].style.bottom = (bottom + window.pageYOffset - scope.pageY )+'px';
+							} else {
+								el.children[0].style.bottom = (viewHeight - scope.innerHeight - scope.cfg.offset)+'px';
+							}
+					},
+					down:function(scope, el) {
+						scope.pageYdown = window.pageYOffset;
+						if (!scope.pageYup) {
+							scope.pageYup = scope.pageY;
+						}
+
+						var bottom = parseInt(el.children[0].style.bottom);
+						if (isNaN(bottom)) {
+							bottom = viewHeight - scope.innerHeight - scope.cfg.offset;
+						}
+						if (bottom < 0) {
+							el.children[0].style.bottom = (bottom + window.pageYOffset - scope.pageY )+'px';
+						} else {
+							el.children[0].style.bottom = '0px';
+						}
+					}
+				}
+			];
 			el.children[0].className = scope.sizeClass+' '+scope.posClass;
 		} else {
 			scope.sizeClass = 'sticky-inner-small';
+			scope.breaks = [
+				{
+					top: scope.wrapBottom - scope.innerHeight - scope.cfg.offset,
+					className: 'bottom',
+					style: [['top', (el.offsetHeight - scope.innerHeight)+'px']]
+				},
+				{
+					top: scope.wrapTop - scope.cfg.offset,
+					className: 'top',
+					style: [['top', scope.cfg.offset+'px']]
+				}
+			];
 			el.children[0].className = scope.sizeClass+' '+scope.posClass;
 		}
 		el.children[0].style.width = (el.offsetWidth)+'px';
@@ -42,7 +91,6 @@ angular.module('angular-sticky-box', []).directive('stickyBox', function ($timeo
 	}
 
 	function scroll(scope, el) {
-		var bottom, scrollBottom;
 		if (!scope.enabled) {
 			return;
 		}
@@ -55,51 +103,36 @@ angular.module('angular-sticky-box', []).directive('stickyBox', function ($timeo
 			el.className = el.className.replace(' sticky-fix', '');
 		}
 
-		if (scope.sizeClass == 'sticky-inner-big') {
-			scope.posClass = '';
-			bottom = parseInt(el.children[0].style.bottom);
-			if (window.pageYOffset + viewHeight > scope.wrapBottom) {
-				scope.posClass = 'down';
-				scrollBottom = window.pageYOffset + viewHeight - scope.wrapBottom;
-				el.children[0].style.bottom = scrollBottom+'px';
-			} else if (window.pageYOffset + scope.cfg.offset < scope.wrapTop) {
-				el.children[0].style.bottom = 0;
-			} else if (window.pageYOffset > scope.pageY) {
-				// going down
-				if (window.pageYOffset + viewHeight > scope.wrapTop + scope.innerHeight) {
-					if (bottom < 0 && bottom - scope.pageY + window.pageYOffset < 0) {
-						el.children[0].style.bottom = (bottom - scope.pageY + window.pageYOffset)+'px';
-					} else {
-						el.children[0].style.bottom = '0';
+		var currentBreak = false;
+		for (var i=0; i<scope.breaks.length; i++) {
+			if (window.pageYOffset > scope.breaks[i].top) {
+				if (scope.posClass != scope.breaks[i].className) {
+					scope.posClass = scope.breaks[i].className;
+					for (var j=0; j<scope.breaks[i].style.length; j++) {
+						el.children[0].style[scope.breaks[i].style[j][0]] = scope.breaks[i].style[j][1];
 					}
-					scope.posClass = 'down';
+				}
+				currentBreak = scope.breaks[i];
+				break;
+			}
+		}
+		if (!currentBreak) {
+			scope.posClass = '';
+		} else {
+			if (window.pageYOffset > scope.pageY) {
+				if (currentBreak.down) {
+					currentBreak.down(scope, el);
 				}
 			} else {
-				// going up
-				scope.posClass = 'up';
-				if (window.pageYOffset > scope.wrapTop + scope.cfg.offset) {
-					if (scope.innerHeight + bottom - viewHeight <= 0) {
-						el.children[0].style.bottom = (viewHeight - scope.innerHeight - scope.cfg.offset)+'px';
-					} else {
-						el.children[0].style.bottom = (bottom - scope.pageY + window.pageYOffset)+'px';
-					}
+				if (currentBreak.up) {
+					currentBreak.up(scope, el);
 				}
 			}
 
-		} else {
-			if (window.pageYOffset + scope.innerHeight + scope.cfg.offset > scope.wrapBottom) {
-				scope.posClass = 'bottom';
-				scrollBottom = window.pageYOffset + viewHeight - scope.wrapBottom;
-				el.children[0].style.bottom = scrollBottom+'px';
-				el.children[0].scrollTop = scrollBottom;
-				el.children[0].style.top = 'auto';
-			} else {
-				el.children[0].style.top = scope.cfg.offset+'px';
-				scope.posClass = '';
-			}
 		}
-		el.children[0].className = scope.sizeClass+' '+scope.posClass;
 		scope.pageY = window.pageYOffset;
+
+		el.children[0].className = scope.sizeClass+' '+scope.posClass;
 	}
 
 
@@ -121,6 +154,8 @@ angular.module('angular-sticky-box', []).directive('stickyBox', function ($timeo
 			} else {
 				scope.cfg.offset = parseInt(scope.offset);
 			}
+
+			scope.pageY = scope.pageYup = scope.pageYdown = window.pageYOffset;
 
 			angular.element(window).on('resize', function() {
 				$timeout(function() {

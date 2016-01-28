@@ -2,19 +2,12 @@
   position: relative;
   overflow: hidden;
   &.sticky-fix {
-    div.sticky-inner-small {
-      position: fixed;
-      top: 0;
+    > div {
+      &.top {
+        position: fixed;
+      }
       &.bottom {
-        top: auto;
-      }
-    }
-    div.sticky-inner-big {
-      &.down {
-        position: fixed;
-      }
-      &.up {
-        position: fixed;
+        position: absolute;
       }
     }
   }
