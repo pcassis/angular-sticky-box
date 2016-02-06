@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('angular-sticky-box', []).directive('stickyBox', function ($timeout) {
+angular.module('angular-sticky-box', []).directive('stickyBox', ['$timeout', function ($timeout) {
 	var viewHeight;
 
 	function setup(scope, el) {
@@ -165,4 +165,4 @@ angular.module('angular-sticky-box', []).directive('stickyBox', function ($timeo
 			$timeout(setupScope, 100);
 		}
 	};
-});
+}]);
