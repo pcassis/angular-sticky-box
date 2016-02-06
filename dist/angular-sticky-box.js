@@ -1,7 +1,7 @@
 /*!
  * angular-sticky-box
  * https://github.com/pcassis/angular-sticky-box
- * Version: 0.0.1 - 2016-01-28T10:28:44.036Z
+ * Version: 0.0.1 - 2016-02-06T07:34:03.168Z
  * License: MIT
  */
 
