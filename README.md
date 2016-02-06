@@ -3,6 +3,8 @@
 Sticky-box is designed to make sidebar visible while scrolling. Both top and bottom edge is considered to position box.
 It can also handle boxes higher than window. jQuery is NOT required.
 
+[DEMO](http://embed.plnkr.co/gQMwNF0jVqxzMvxUN5Gx/)
+
 ### Installation
 
 Install via bower
