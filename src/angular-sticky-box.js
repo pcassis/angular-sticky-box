@@ -155,7 +155,7 @@ angular.module('angular-sticky-box', []).directive('stickyBox', ['$timeout', fun
 				});
 			});
 			angular.element(window).on('scroll', function() {
-				scroll(scope, el);
+				setup(scope, el);
 			});
 
 			scope.$on('stickyBoxUpdate', function() {
