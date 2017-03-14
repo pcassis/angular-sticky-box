@@ -1,7 +1,7 @@
 /*!
  * angular-sticky-box
  * https://github.com/pcassis/angular-sticky-box
- * Version: 0.0.1 - 2016-02-06T08:00:13.080Z
+ * Version: 0.0.2 - 2017-03-14T22:30:50.556Z
  * License: MIT
  */
 
@@ -158,7 +158,9 @@ angular.module('angular-sticky-box', []).directive('stickyBox', ['$timeout', fun
 			scope.pageY = scope.pageYup = scope.pageYdown = window.pageYOffset;
 
 			angular.element(window).on('resize', function() {
-				$timeout(function() {
+				$timeout.cancel(scope.resizing);
+
+				scope.resizing = $timeout(function() {
 					setup(scope, el);
 				});
 			});
@@ -174,4 +176,5 @@ angular.module('angular-sticky-box', []).directive('stickyBox', ['$timeout', fun
 		}
 	};
 }]);
+
 angular.module("angular-sticky-box").run(["$templateCache", function($templateCache) {$templateCache.put("angular-sticky-box.html","<div class=\"angular-sticky-box\"><div>The value is {{getValue()}}</div><button ng-click=\"increment()\">+</button></div>");}]);

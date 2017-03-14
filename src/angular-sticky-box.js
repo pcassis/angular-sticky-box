@@ -150,7 +150,7 @@ angular.module('angular-sticky-box', []).directive('stickyBox', ['$timeout', fun
 			scope.pageY = scope.pageYup = scope.pageYdown = window.pageYOffset;
 
 			angular.element(window).on('resize', function() {
-				$timeout.cancel(scope.resizing)
+				$timeout.cancel(scope.resizing);
 
 				scope.resizing = $timeout(function() {
 					setup(scope, el);
